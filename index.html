@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YUV AI WHEEL OF FORTUNE</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #root {
+            text-align: center;
+        }
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            border: 10px solid #333;
+        }
+        .wheel-section {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            left: 50%;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .wheel-section span {
+            position: relative;
+            transform: rotate(-30deg);
+            text-align: center;
+            padding: 0 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .pointer {
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #333;
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const WheelOfFortune = () => {
+            const [rotation, setRotation] = React.useState(0);
+            const [spinning, setSpinning] = React.useState(false);
+            const [result, setResult] = React.useState('');
+
+            const sections = [
+                { color: '#FF6B6B', text: 'קורס אוטומציות' },
+                { color: '#4ECDC4', text: 'קנס 1000 יורו' },
+                { color: '#45B7D1', text: 'קורס אוטומציות' },
+                { color: '#FFA07A', text: 'קנס 1000 יורו' },
+                { color: '#98D8C8', text: 'קורס אוטומציות' },
+                { color: '#F06292', text: 'קנס 1000 יורו' },
+            ];
+
+            const spinWheel = () => {
+                if (!spinning) {
+                    setSpinning(true);
+                    const newRotation = rotation + Math.floor(Math.random() * 360) + 720; // At least 2 full spins
+                    setRotation(newRotation);
+                    setTimeout(() => {
+                        setSpinning(false);
+                        const index = Math.floor(((newRotation % 360) / 360) * sections.length);
+                        setResult(sections[index].text);
+                    }, 5000);
+                }
+            };
+
+            return (
+                <div>
+                    <h1>YUV AI WHEEL OF FORTUNE</h1>
+                    <div className="wheel-container">
+                        <div className="pointer"></div>
+                        <div className="wheel" style={{ transform: `rotate(${rotation}deg)` }}>
+                            {sections.map((section, index) => (
+                                <div
+                                    key={index}
+                                    className="wheel-section"
+                                    style={{
+                                        transform: `rotate(${index * 60}deg)`,
+                                        backgroundColor: section.color,
+                                    }}
+                                >
+                                    <span>{section.text}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <button onClick={spinWheel} disabled={spinning}>
+                        {spinning ? 'מסתובב...' : 'סובב את הגלגל'}
+                    </button>
+                    {result && <h2>התוצאה: {result}</h2>}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<WheelOfFortune />, document.getElementById('root'));
+    </script>
+</body>
+</html>
